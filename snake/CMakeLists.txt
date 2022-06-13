@@ -10,5 +10,5 @@ download_project(PROJ uv
                  GIT_TAG     master)
 
 add_subdirectory(${uv_SOURCE_DIR} ${uv_BINARY_DIR})
-add_executable(snake main.c)
+add_executable(snake main.c world/world.h world/world.c loop/event.h loop/event.c world/entity.c world/entity.h)
 target_link_libraries(snake uv)
