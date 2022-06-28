@@ -6,7 +6,12 @@
 #define SNAKE_EVENT_H
 
 #include "uv.h"
+#include "../world/world.h"
 
-uv_loop_t create_loop();
+void world_renderer_timer_handler(uv_tty_t* tty_stdout, world_t* world);
+
+void snake_mover_timer_handler(uv_loop_t* loop, const uv_tty_t* tty_stdout, const world_t* world, snake_t* snake);
+
+void world_stdin_handler(const uv_buf_t* buf, world_t* world, snake_t* snake);
 
 #endif //SNAKE_EVENT_H
