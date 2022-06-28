@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "world.h"
+#include "../snake/snake.h"
 
 void init_world_raw(FILE* file, world_t* world) {
     fseek(file, 0, SEEK_END);

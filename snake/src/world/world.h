@@ -6,7 +6,8 @@
 #define SNAKE_WORLD_H
 
 #include <stdio.h>
-#include "entity.h"
+#include "../entity/entity.h"
+#include "../snake/snake.h"
 
 typedef struct world_s {
     char* world_raw;

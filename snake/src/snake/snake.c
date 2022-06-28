@@ -1,6 +1,5 @@
 #include <stdlib.h>
-#include "entity.h"
-#include "world.h"
+#include "snake.h"
 
 snake_part_t create_snake_part_entity(coordinate_t coordinates) {
     snake_part_t snake_part;
@@ -107,20 +106,4 @@ int move_right(int world_width, snake_t* snake)
     snake->direction = RIGHT;
 
     return 0;
-}
-
-apple_t create_apple_entity(coordinate_t coordinates) {
-    apple_t apple;
-
-    apple.coordinates = coordinates;
-
-    return apple;
-}
-
-obstacle_t create_obstacle_entity(coordinate_t coordinates) {
-    obstacle_t obstacle;
-
-    obstacle.coordinates = coordinates;
-
-    return obstacle;
 }

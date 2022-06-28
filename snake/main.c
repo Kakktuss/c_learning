@@ -1,9 +1,11 @@
 #include <stdio.h>
-#include <uv.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "world/world.h"
-#include "loop/event.h"
+#include "src/snake/snake.h"
+#include "src/world/world.h"
+#include "uv.h"
+#include "src/world/world_event.h"
+#include "src/snake/snake_event.h"
 
 FILE* file;
 snake_t snake;
@@ -19,6 +21,8 @@ uv_tty_t tty_stdout;
 uv_tty_t tty_stdin;
 uv_timer_t timer_renderer;
 uv_timer_t timer_mover;
+uv_timer_t timer_apple_spawner;
+uv_timer_t timer_obstacle_spawner;
 
 /**
  * @brief Inits the snake with it's parts
@@ -94,6 +98,14 @@ void timer_mover_cb(uv_timer_t* handle) {
     snake_mover_timer_handler(loop, &tty_stdout, &world, &snake);
 }
 
+void timer_apple_spawner_cb(uv_timer_t* handle) {
+
+}
+
+void timer_obstacle_spawner_cb(uv_timer_t* handle) {
+
+}
+
 /**
  * @brief Callback triggered by the stdin event to alloc the buffer
  * 
@@ -122,17 +134,29 @@ void stdin_read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
 void init_loop() {
     loop = uv_default_loop();
 
+    // Init the tty stdin handler on mode raw
     uv_tty_init(loop, &tty_stdin, 0, 1);
-    uv_tty_init(loop, &tty_stdout, 1, 0);
     uv_tty_set_mode(&tty_stdin, UV_TTY_MODE_RAW);
-
     uv_read_start((uv_stream_t*)&tty_stdin, stdin_alloc_buffer, stdin_read_cb);
 
+    // Init the tty stdout
+    uv_tty_init(loop, &tty_stdout, 1, 0);
+
+    // Init the renderer timer on a second rendering basis
     uv_timer_init(loop, &timer_renderer);
     uv_timer_start(&timer_renderer, timer_renderer_cb, 0, 1000);
 
+    // Init the renderer timer delayed by 2.5 seconds and triggering every 1 second basis
     uv_timer_init(loop, &timer_mover);
     uv_timer_start(&timer_mover, timer_mover_cb, 2500, 1000);
+
+    // Init the apple spawner timer delayed by 2.5 seconds and triggering on a random basis
+    uv_timer_init(loop, &timer_apple_spawner);
+    uv_timer_start(&timer_apple_spawner, timer_apple_spawner_cb, 2500, 1000);
+
+    // Init the obstacle spawner timer delayed by 2.5 seconds and triggering on a random basis
+    uv_timer_init(loop, &timer_obstacle_spawner);
+    uv_timer_start(&timer_obstacle_spawner, timer_obstacle_spawner_cb, 2500, 1000);
 }
 
 int main(int argc, char **argv) {
