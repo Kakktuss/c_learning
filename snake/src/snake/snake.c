@@ -23,15 +23,15 @@ snake_t create_snake_entity(int parts_count, snake_part_t* parts, direction_t di
     return snake;
 }
 
-void bind_snake_part(snake_t* snake, snake_part_t part) {
+void bind_snake_part(snake_t* snake, const snake_part_t part) {
     // If the length of the snake is superior than the previously allocated buffer, then alloc with a superior size
     if(snake->parts_count > 100) {
         snake->parts = realloc(snake->parts, sizeof(snake_t) * (snake->parts_count + 100));
     }
 
-    snake->parts_count++;
+    snake->parts[snake->parts_count + 1] = part;
 
-    snake->parts[snake->parts_count] = part;
+    snake->parts_count++;
 }
 
 void move_parts(snake_t* snake) {

@@ -16,15 +16,16 @@ typedef struct world_s {
     int width;
     snake_t* snake;
     size_t apples_count;
-    apple_t** apples;
+    apple_t apples[100];
     size_t obstacles_count;
-    obstacle_t** obstacles;
+    obstacle_t obstacles[100];
 } world_t;
 
-world_t create_world(FILE* world_file, snake_t* snake, apple_t** apples, size_t apples_count, obstacle_t** obstacles, size_t obstacles_count);
+world_t create_world(FILE* world_file, snake_t* snake);
 
-void bind_apple(world_t* world, apple_t* apple);
-void bind_obstacle(world_t* world, obstacle_t* obstacle);
+void bind_apple(world_t* world, apple_t apple);
+void unbind_apple(world_t* world, int apple_index);
+void bind_obstacle(world_t* world, obstacle_t obstacle);
 
-char* get_world_representation(world_t* world);
+char* get_world_representation(const world_t* world);
 #endif //SNAKE_WORLD_H

@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include "src/snake/snake.h"
 #include "src/world/world.h"
 #include "uv.h"
 #include "src/world/world_event.h"
 #include "src/snake/snake_event.h"
+#include "src/utility.h"
 
 FILE* file;
 snake_t snake;
 world_t  world;
-apple_t* apples;
-size_t apples_count;
-obstacle_t* obstacles;
-size_t obstacles_count;
+
+direction_command_buffer_t direction_command_buffer;
 
 uv_loop_t *loop;
 uv_timer_t timer;
@@ -44,19 +44,33 @@ void init_snake() {
 void init_apples() {
     int world_canvas_cases_count = (world.height - 2) * (world.width - 2);
 
-    int apples_random_limit = world_canvas_cases_count % 100;
+    int apples_random_limit = floor(world_canvas_cases_count / 6);
 
-    apples_count = rand() % apples_random_limit;
+    world.apples_count = rand() % apples_random_limit;
 
-    /**
-     * for(int i = 0; i < apples_count; i++) {
-        coordinate_t apple_coordinates = {.x = rand() % (world.width - 2), .y = rand() % (world.height % 2) };
+    for(int i = 0; i < world.apples_count; i++) {
+        coordinate_t apple_coordinates = {.x = rand() % (world.width - 2) + 1, .y = rand() % (world.height - 2) + 1 };
 
         apple_t apple = create_apple_entity(apple_coordinates);
 
-        apples[i] = apple;
+        world.apples[i] = apple;
     }
-     */
+}
+
+void init_obstacle() {
+    int world_canvas_cases_count = (world.height - 2) * (world.width - 2);
+
+    int obstacles_random_limit = floor(world_canvas_cases_count / 6);
+
+    world.obstacles_count = rand() % obstacles_random_limit;
+
+    for(int i = 0; i < world.obstacles_count; i++) {
+        coordinate_t obstacle_coordinates = {.x = rand() % (world.width - 2) + 1, .y = rand() % (world.height - 2) + 1 };
+
+        obstacle_t obstacle = create_obstacle_entity(obstacle_coordinates);
+
+        world.obstacles[i] = obstacle;
+    }
 }
 
 /**
@@ -74,9 +88,11 @@ bool init_world(char* file_name) {
 
     init_snake();
 
-    world = create_world(file, &snake, &apples, apples_count, &obstacles, obstacles_count);
+    world = create_world(file, &snake);
 
     init_apples();
+
+    init_obstacle();
 
     return true;
 }
@@ -95,7 +111,7 @@ void timer_renderer_cb(uv_timer_t* handle) {
  * @param handle
  */
 void timer_mover_cb(uv_timer_t* handle) {
-    snake_mover_timer_handler(loop, &tty_stdout, &world, &snake);
+    snake_mover_timer_handler(loop, &tty_stdout, &direction_command_buffer, &world, &snake);
 }
 
 void timer_apple_spawner_cb(uv_timer_t* handle) {
@@ -126,7 +142,7 @@ void stdin_alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* bu
  * @param buf 
  */
 void stdin_read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
-    world_stdin_handler(buf, &world, &snake);
+    world_stdin_handler(buf, &world, &snake, &direction_command_buffer);
 
     free(buf->base);
 }
@@ -144,11 +160,11 @@ void init_loop() {
 
     // Init the renderer timer on a second rendering basis
     uv_timer_init(loop, &timer_renderer);
-    uv_timer_start(&timer_renderer, timer_renderer_cb, 0, 1000);
+    uv_timer_start(&timer_renderer, timer_renderer_cb, 0, 100);
 
     // Init the renderer timer delayed by 2.5 seconds and triggering every 1 second basis
     uv_timer_init(loop, &timer_mover);
-    uv_timer_start(&timer_mover, timer_mover_cb, 2500, 1000);
+    uv_timer_start(&timer_mover, timer_mover_cb, 2500, 500);
 
     // Init the apple spawner timer delayed by 2.5 seconds and triggering on a random basis
     uv_timer_init(loop, &timer_apple_spawner);
