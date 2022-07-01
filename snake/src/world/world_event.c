@@ -16,16 +16,16 @@ void world_stdin_handler(const uv_buf_t* buf, world_t* world, snake_t* snake, di
         return;
     }
 
-    if(!strcmp(buf->base, "Z") || !strcmp(buf->base, "Z\n"))
+    if((!strcmp(buf->base, "Z") || !strcmp(buf->base, "Z\n")) && snake->direction != DOWN)
         direction = UP;
-    else if(strcmp(buf->base, "S") == 0 || !strcmp(buf->base, "S\n"))
+    else if((strcmp(buf->base, "S") == 0 || !strcmp(buf->base, "S\n")) && snake->direction != UP)
         direction = DOWN;
-    else if(strcmp(buf->base, "Q") == 0 || !strcmp(buf->base, "Q\n"))
+    else if((strcmp(buf->base, "Q") == 0 || !strcmp(buf->base, "Q\n")) && snake->direction != RIGHT)
         direction = LEFT;
-    else if(strcmp(buf->base, "D") == 0 || !strcmp(buf->base, "D\n"))
+    else if((strcmp(buf->base, "D") == 0 || !strcmp(buf->base, "D\n")) && snake->direction != LEFT)
         direction = RIGHT;
     else {
-        direction = UP;
+        return;
     }
 
     direction_command_buffer->commands[0] = direction;

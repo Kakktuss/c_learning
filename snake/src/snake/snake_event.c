@@ -27,7 +27,5 @@ void snake_mover_timer_handler(uv_loop_t* loop, const uv_tty_t* tty_stdout, dire
         uv_write(&flusher_write_req, (uv_stream_t*) tty_stdout, &loose_screen, 1, NULL);
 
         graceful_stop_loop(loop);
-    } else {
-
     }
 }
