@@ -5,10 +5,22 @@
 #include "../loop/utility.h"
 #include "../utility.h"
 
+/**
+ * @brief Method triggered by the libuv timer handler to render the world
+ * @param tty_stdout
+ * @param world
+ */
 void world_renderer_timer_handler(uv_tty_t* tty_stdout, world_t* world) {
     render_world(tty_stdout, world);
 }
 
+/**
+ * @brief Method triggered by the libuv tty stdin handler to handle user inputs
+ * @param buf
+ * @param world
+ * @param snake
+ * @param direction_command_buffer
+ */
 void world_stdin_handler(const uv_buf_t* buf, world_t* world, snake_t* snake, direction_command_buffer_t* direction_command_buffer) {
     direction_t direction;
 

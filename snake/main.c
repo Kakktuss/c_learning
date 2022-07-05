@@ -41,6 +41,9 @@ void init_snake() {
     snake = create_snake_entity(3, parts, DOWN);
 }
 
+/**
+ * @brief Inits the apples in the world
+ */
 void init_apples() {
     int world_canvas_cases_count = (world.height - 2) * (world.width - 2);
 
@@ -57,6 +60,9 @@ void init_apples() {
     }
 }
 
+/**
+ * @brief Inits the obstacles in the world
+ */
 void init_obstacle() {
     int world_canvas_cases_count = (world.height - 2) * (world.width - 2);
 
@@ -147,6 +153,9 @@ void stdin_read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
     free(buf->base);
 }
 
+/**
+ * @brief Inits all the libuv loops
+ */
 void init_loop() {
     loop = uv_default_loop();
 

@@ -4,6 +4,14 @@
 #include "../loop/utility.h"
 #include "../utility.h"
 
+/**
+ * @brief Method triggered by the libuv timer handler to auto move the snake
+ * @param loop
+ * @param tty_stdout
+ * @param direction_command_buffer
+ * @param world
+ * @param snake
+ */
 void snake_mover_timer_handler(uv_loop_t* loop, const uv_tty_t* tty_stdout, direction_command_buffer_t* direction_command_buffer, world_t* world, snake_t* snake) {
     direction_t snake_direction;
 

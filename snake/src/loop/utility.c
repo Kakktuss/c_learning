@@ -9,6 +9,10 @@ void graceful_stop_loop_walk_handler(uv_handle_t* handle, void* arg)
     uv_close(handle, NULL);
 }
 
+/**
+ * @brief Gracefully closes libuv handlers and stops the loop
+ * @param loop
+ */
 void graceful_stop_loop(uv_loop_t* loop) {
     uv_tty_reset_mode();
 
@@ -17,6 +21,11 @@ void graceful_stop_loop(uv_loop_t* loop) {
     uv_loop_close(loop);
 }
 
+/**
+ * @brief Renders the world on the terminal with it's boundaries, the snake, the apples and the obstacles
+ * @param tty_stdout The Stdout TTY used to print the world on
+ * @param world The world instance
+ */
 void render_world(uv_tty_t* tty_stdout, const world_t* world) {
     const char flusher_operation[] = "\x1b[2J";
 
@@ -61,6 +70,12 @@ void render_world(uv_tty_t* tty_stdout, const world_t* world) {
     uv_write(&write_req, (uv_stream_t*)tty_stdout, &buf, 1, NULL);
 }
 
+/**
+ * @brief Asserts the snake is or not on an apple
+ * @param world The world instance to each on apples
+ * @param snake The snake entity
+ * @return
+ */
 int assert_snake_on_apple(const world_t* world, const snake_t* snake) {
     // Worst case O(n);
     for(int apple_index = 0; apple_index < world->apples_count; apple_index++) {
@@ -72,6 +87,12 @@ int assert_snake_on_apple(const world_t* world, const snake_t* snake) {
     return 0;
 }
 
+/**
+ * @brief Asserts the snake is or not on an obstacle
+ * @param world The world instance to each on obstacles
+ * @param snake The snake entity
+ * @return
+ */
 int assert_snake_on_obstacle(const world_t* world, const snake_t* snake) {
     // Worst case O(n);
     for(int obstacle_index = 0; obstacle_index < world->obstacles_count; obstacle_index++) {
@@ -83,6 +104,11 @@ int assert_snake_on_obstacle(const world_t* world, const snake_t* snake) {
     return 0;
 }
 
+/**
+ * @brief Asserts the snake is or not on one of it's part
+ * @param snake The snake entity
+ * @return
+ */
 int assert_snake_on_itself(const snake_t* snake) {
     // Worst case O(n)
     for(int snake_part_index = 1; snake_part_index < snake->parts_count; snake_part_index++) {
@@ -93,20 +119,32 @@ int assert_snake_on_itself(const snake_t* snake) {
     return 0;
 }
 
+/**
+ * @brief Moves the snake to the given direction_operand
+ * @param world The world instance
+ * @param snake The snake entity instance
+ * @param direction_operand A direction operand
+ * @return
+ */
 int move_snake(world_t* world, snake_t* snake, direction_t direction_operand) {
     int result = 0;
 
-    if(direction_operand == UP)
-        result = move_up(snake);
-
-    if(direction_operand == DOWN)
-        result = move_down(world->height, snake);
-
-    if(direction_operand == LEFT)
-        result = move_left(snake);
-
-    if(direction_operand == RIGHT)
-        result = move_right(world->width, snake);
+    switch (direction_operand) {
+        case UP:
+            move_up(snake);
+            break;
+        case DOWN:
+            move_down(world->height, snake);
+            break;
+        case LEFT:
+            move_left(snake);
+            break;
+        case RIGHT:
+            move_right(world->width, snake);
+            break;
+        default:
+            return 0;
+    }
 
     int apple_index = assert_snake_on_apple(world, snake);
 
